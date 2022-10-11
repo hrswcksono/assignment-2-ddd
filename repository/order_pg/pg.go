@@ -72,21 +72,15 @@ func (o *orderPG) UpdateOrder(orderId int, orderPayload *entity.Order) (*entity.
 	}()
 
 	var order = entity.Order{}
+	orderPayload.OrderID = uint(orderId)
 
 	if err := tx.Error; err != nil {
 		return nil, err
 	}
 
-	if err := tx.Model(&order).Where("order_id = ?", orderId).Updates(orderPayload).Error; err != nil {
+	if err := tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(orderPayload).Error; err != nil {
 		tx.Rollback()
 		return nil, err
-	}
-
-	for _, item := range orderPayload.Items {
-		if err := tx.Model(&order.Items).Where("item_id = ?", item.ItemID).Updates(item).Error; err != nil {
-			tx.Rollback()
-			return nil, err
-		}
 	}
 
 	if err := tx.Preload("Items").Where("order_id = ?", orderId).Find(&order).Error; err != nil {
