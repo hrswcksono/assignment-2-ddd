@@ -1,16 +1,16 @@
 package service
 
 import (
-	"hrswcksono/assignment2/dto"
+	"hrswcksono/assignment2/dto/order_dto"
 	"hrswcksono/assignment2/entity"
 	"hrswcksono/assignment2/repository"
 )
 
 type OrderService interface {
-	MakeOrder(itemPayload []*entity.Item, customerName string) error
-	ReadOrder() ([]*dto.OrderHistoryResponse, error)
-	EditOrder(orderId int, itemPayload []*entity.Item) (*dto.OrderHistoryResponse, error)
-	RemoveOrder(orderId int)
+	MakeOrder(orderPayload *order_dto.CreateOrderRequest) error
+	// ReadOrder() ([]*order_dto.OrderHistoryResponse, error)
+	// EditOrder(orderId int, itemPayload []*entity.Item) (*order_dto.OrderHistoryResponse, error)
+	// RemoveOrder(orderId int)
 }
 
 type orderService struct {
@@ -23,20 +23,34 @@ func NewOrderService(orderRepo repository.OrderRepository) OrderService {
 	}
 }
 
-func (o *orderService) MakeOrder(itemPayload []*entity.Item, customerName string) error {
+func (m *orderService) MakeOrder(orderPayload *order_dto.CreateOrderRequest) error {
+	if err := orderPayload.Validate(); err != nil {
+		return err
+	}
+
+	movieRequest := &entity.Order{}
+
+	orderPayload.BindToOrder(movieRequest)
+
+	err := m.orderRepo.CreateOrder(movieRequest)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (o *orderService) ReadOrder() ([]*dto.OrderHistoryResponse, error) {
-	orderHistories := []*dto.OrderHistoryResponse{}
+// func (o *orderService) ReadOrder() ([]*order_dto.OrderHistoryResponse, error) {
+// 	orderHistories := []*order_dto.OrderHistoryResponse{}
 
-	return orderHistories, nil
-}
+// 	return orderHistories, nil
+// }
 
-func (o *orderService) EditOrder(orderId int, itemPayload []*entity.Item) (*dto.OrderHistoryResponse, error) {
-	return &dto.OrderHistoryResponse{}, nil
-}
+// func (o *orderService) EditOrder(orderId int, itemPayload []*entity.Item) (*order_dto.OrderHistoryResponse, error) {
+// 	return &order_dto.OrderHistoryResponse{}, nil
+// }
 
-func (o *orderService) RemoveOrder(orderId int) {
+// func (o *orderService) RemoveOrder(orderId int) {
 
-}
+// }

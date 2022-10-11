@@ -1,8 +1,9 @@
 package entity
 
 type Item struct {
-	Id          int
-	ItemCode    string
-	Description string
-	Quantity    int
+	ItemId      uint   `gorm:"primaryKey" json:"lineItemId"`
+	ItemCode    string `json:"itemCode"`
+	Description string `json:"description"`
+	Quantity    int    `json:"quantity"`
+	OrderFk     uint   `json:"orderFk"`
 }

@@ -2,47 +2,38 @@ package database
 
 import (
 	"fmt"
-	"time"
+	"hrswcksono/assignment2/entity"
+	"log"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type Items struct {
-	ItemId      uint `gorm:"primaryKey"`
-	ItemCode    int
-	Description string
-	Quantity    int
-	OrderFk     uint
-}
-
-type Orders struct {
-	OrderId      uint `gorm:"primaryKey"`
-	CustomerName string
-	OrderedAt    time.Time
-	Items        []Items `gorm:"foreignKey:OrderFk;references:OrderId"`
-}
-
 var (
-	username = "root"
-	password = ""
 	host     = "localhost"
-	port     = 3306
-	dbName   = "orders_by"
+	user     = "postgres"
+	password = "12345"
+	dbPort   = "5432"
+	dbName   = "order_by"
 	db       *gorm.DB
+	err      error
 )
 
-func InitDb() {
-	// dsn := "root:@tcp(127.0.0.1:3306)/orders_by?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, dbName)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+func StartDB() {
+	config := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		host, user, password, dbName, dbPort)
+
+	db, err = gorm.Open(postgres.Open(config), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatal("error connecting to database :", err)
 	}
 
-	db.Debug().AutoMigrate(&Orders{}, &Items{})
-}
+	err = db.Debug().AutoMigrate(entity.Order{}, entity.Item{})
+	if err != nil {
+		panic("Migration failed: " + err.Error())
+	}
 
+}
 func GetDB() *gorm.DB {
 	return db
 }

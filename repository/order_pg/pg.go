@@ -1,21 +1,12 @@
 package order_pg
 
 import (
-	"hrswcksono/assignment2/dto"
+	"hrswcksono/assignment2/dto/order_dto"
 	"hrswcksono/assignment2/entity"
 	"hrswcksono/assignment2/repository"
 
 	"gorm.io/gorm"
 )
-
-// const (
-// 	createOrderItemQuery = `
-// 		insert into orders
-// 		(
-
-// 		)
-// 	`
-// )
 
 type orderPG struct {
 	db *gorm.DB
@@ -27,20 +18,38 @@ func NewOrderPG(db *gorm.DB) repository.OrderRepository {
 	}
 }
 
-func (o *orderPG) CreateOrder(itemPayload []*entity.Item, customerName string) error {
+func (o *orderPG) CreateOrder(orderPayload *entity.Order) error {
 
-	return nil
+	tx := o.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	orderInput := orderPayload
+
+	if err := tx.Error; err != nil {
+		return err
+	}
+
+	if err := tx.Create(orderInput).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
-func (o *orderPG) GetOrder() ([]*dto.OrderHistoryResponse, error) {
+func (o *orderPG) GetOrder() ([]*order_dto.OrderHistoryResponse, error) {
 
-	orderHistories := []*dto.OrderHistoryResponse{}
+	orderHistories := []*order_dto.OrderHistoryResponse{}
 
 	return orderHistories, nil
 }
 
-func (o *orderPG) UpdateOrder(orderId int, itemPayload []*entity.Item) (*dto.OrderHistoryResponse, error) {
-	orderHistories := &dto.OrderHistoryResponse{}
+func (o *orderPG) UpdateOrder(orderId int, orderPayload *entity.Order) (*order_dto.OrderHistoryResponse, error) {
+	orderHistories := &order_dto.OrderHistoryResponse{}
 
 	return orderHistories, nil
 }
