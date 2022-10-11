@@ -59,6 +59,39 @@ func (o orderRestHandler) ReadOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, orders)
 }
 
+func (o orderRestHandler) EditOrder(c *gin.Context) {
+	orderId, err := helper.GetParamId(c, "orderId")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"msg": err.Error(),
+			"err": "BAD_REQUEST",
+		})
+		return
+	}
+
+	var updateRequest *order_dto.UpdateOrderRequest
+
+	if err := c.ShouldBindJSON(&updateRequest); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, map[string]interface{}{
+			"msg": "invalid JSON request",
+			"err": "BAD_REQUEST",
+		})
+		return
+	}
+
+	order, err := o.service.EditOrder(orderId, updateRequest)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"msg": err.Error(),
+			"err": "INTERNAL_SERVER_ERROR",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, order)
+}
+
 func (o orderRestHandler) RemoveOrder(c *gin.Context) {
 
 	orderId, err := helper.GetParamId(c, "orderId")

@@ -9,7 +9,7 @@ import (
 type OrderService interface {
 	MakeOrder(orderPayload *order_dto.CreateOrderRequest) error
 	ReadOrder() ([]entity.Order, error)
-	// EditOrder(orderId int, itemPayload []*entity.Item) (*order_dto.OrderHistoryResponse, error)
+	EditOrder(orderId int, itemPayload *order_dto.UpdateOrderRequest) (*entity.Order, error)
 	RemoveOrder(orderId int) error
 }
 
@@ -28,11 +28,11 @@ func (m *orderService) MakeOrder(orderPayload *order_dto.CreateOrderRequest) err
 		return err
 	}
 
-	movieRequest := &entity.Order{}
+	orderRequest := &entity.Order{}
 
-	orderPayload.BindToOrder(movieRequest)
+	orderPayload.BindToOrderCreate(orderRequest)
 
-	err := m.orderRepo.CreateOrder(movieRequest)
+	err := m.orderRepo.CreateOrder(orderRequest)
 
 	if err != nil {
 		return err
@@ -51,9 +51,25 @@ func (m *orderService) ReadOrder() ([]entity.Order, error) {
 	return orders, nil
 }
 
-// func (o *orderService) EditOrder(orderId int, itemPayload []*entity.Item) (*order_dto.OrderHistoryResponse, error) {
-// 	return &order_dto.OrderHistoryResponse{}, nil
-// }
+func (o *orderService) EditOrder(orderId int, orderPayload *order_dto.UpdateOrderRequest) (*entity.Order, error) {
+	if err := orderPayload.Validate(); err != nil {
+		return nil, err
+	}
+
+	orderRequest := &entity.Order{}
+
+	orderPayload.BindToOrderUpdate(orderRequest)
+
+	// fmt.Println(orderPayload)
+
+	editedOrder, err := o.orderRepo.UpdateOrder(orderId, orderRequest)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return editedOrder, nil
+}
 
 func (m *orderService) RemoveOrder(orderId int) error {
 

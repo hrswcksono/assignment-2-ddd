@@ -27,6 +27,7 @@ func StartApp() {
 		orderRoute.POST("/", orderRestHandler.MakeOrder)
 		orderRoute.GET("/", orderRestHandler.ReadOrder)
 		orderRoute.DELETE("/:orderId", orderRestHandler.RemoveOrder)
+		orderRoute.PUT("/:orderId", orderRestHandler.EditOrder)
 	}
 
 	fmt.Println("Server running on PORT =>", port)

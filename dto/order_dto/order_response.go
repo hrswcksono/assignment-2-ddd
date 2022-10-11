@@ -2,18 +2,18 @@ package order_dto
 
 import "time"
 
-type OrderedItem struct {
-	LineItemId  int    `json:"lineItemId"`
+type CreatedItemResponse struct {
+	ItemId      int    `json:"lineItemId"`
 	ItemCode    string `json:"itemCode"`
 	Description string `json:"description"`
 	Quantity    int    `json:"quantity"`
 }
 
-type OrderHistoryResponse struct {
-	OrderId      int           `json:"orderId"`
-	CustomerName string        `json:"customerName"`
-	OrderedAt    time.Time     `json:"orderedAt"`
-	Items        []OrderedItem `json:"items"`
+type CreatedOrderResponse struct {
+	OrderId      int                   `json:"orderId"`
+	CustomerName string                `json:"customerName"`
+	OrderedAt    time.Time             `json:"orderedAt"`
+	Items        []CreatedItemResponse `json:"items"`
 }
 
 type SuccessOrder struct {
