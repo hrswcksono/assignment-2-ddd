@@ -7,7 +7,7 @@ import (
 
 type OrderRepository interface {
 	CreateOrder(orderPayload *entity.Order) error
-	GetOrder() ([]*order_dto.OrderHistoryResponse, error)
+	GetAllOrder() ([]entity.Order, error)
 	UpdateOrder(orderId int, orderPayload *entity.Order) (*order_dto.OrderHistoryResponse, error)
-	DeleteOrder(orderId int)
+	DeleteOrder(orderId int) error
 }

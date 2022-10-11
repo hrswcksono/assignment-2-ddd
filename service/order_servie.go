@@ -8,9 +8,9 @@ import (
 
 type OrderService interface {
 	MakeOrder(orderPayload *order_dto.CreateOrderRequest) error
-	// ReadOrder() ([]*order_dto.OrderHistoryResponse, error)
+	ReadOrder() ([]entity.Order, error)
 	// EditOrder(orderId int, itemPayload []*entity.Item) (*order_dto.OrderHistoryResponse, error)
-	// RemoveOrder(orderId int)
+	RemoveOrder(orderId int) error
 }
 
 type orderService struct {
@@ -41,16 +41,27 @@ func (m *orderService) MakeOrder(orderPayload *order_dto.CreateOrderRequest) err
 	return nil
 }
 
-// func (o *orderService) ReadOrder() ([]*order_dto.OrderHistoryResponse, error) {
-// 	orderHistories := []*order_dto.OrderHistoryResponse{}
+func (m *orderService) ReadOrder() ([]entity.Order, error) {
+	orders, err := m.orderRepo.GetAllOrder()
 
-// 	return orderHistories, nil
-// }
+	if err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}
 
 // func (o *orderService) EditOrder(orderId int, itemPayload []*entity.Item) (*order_dto.OrderHistoryResponse, error) {
 // 	return &order_dto.OrderHistoryResponse{}, nil
 // }
 
-// func (o *orderService) RemoveOrder(orderId int) {
+func (m *orderService) RemoveOrder(orderId int) error {
 
-// }
+	err := m.orderRepo.DeleteOrder(orderId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

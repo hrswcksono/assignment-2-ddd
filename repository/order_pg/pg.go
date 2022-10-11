@@ -6,6 +6,7 @@ import (
 	"hrswcksono/assignment2/repository"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type orderPG struct {
@@ -41,11 +42,26 @@ func (o *orderPG) CreateOrder(orderPayload *entity.Order) error {
 	return tx.Commit().Error
 }
 
-func (o *orderPG) GetOrder() ([]*order_dto.OrderHistoryResponse, error) {
+func (o *orderPG) GetAllOrder() ([]entity.Order, error) {
+	tx := o.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
-	orderHistories := []*order_dto.OrderHistoryResponse{}
+	var order = []entity.Order{}
 
-	return orderHistories, nil
+	if err := tx.Error; err != nil {
+		return nil, err
+	}
+
+	if err := tx.Preload("Items").Find(&order).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	return order, tx.Commit().Error
 }
 
 func (o *orderPG) UpdateOrder(orderId int, orderPayload *entity.Order) (*order_dto.OrderHistoryResponse, error) {
@@ -54,6 +70,24 @@ func (o *orderPG) UpdateOrder(orderId int, orderPayload *entity.Order) (*order_d
 	return orderHistories, nil
 }
 
-func (o *orderPG) DeleteOrder(orderId int) {
+func (o *orderPG) DeleteOrder(orderId int) error {
+	tx := o.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
+	order := &entity.Order{}
+
+	if err := tx.Error; err != nil {
+		return err
+	}
+
+	if err := tx.Select(clause.Associations).Delete(order, orderId).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }

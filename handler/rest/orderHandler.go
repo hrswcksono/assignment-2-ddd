@@ -2,6 +2,7 @@ package rest
 
 import (
 	"hrswcksono/assignment2/dto/order_dto"
+	"hrswcksono/assignment2/pkg/helper"
 	"hrswcksono/assignment2/service"
 	"net/http"
 
@@ -41,5 +42,46 @@ func (o orderRestHandler) MakeOrder(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, order_dto.SuccessOrder{
 		Message: "order sukses terbuat",
+	})
+}
+
+func (o orderRestHandler) ReadOrder(c *gin.Context) {
+	orders, err := o.service.ReadOrder()
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"msg": err.Error(),
+			"err": "INTERNAL_SERVER_ERROR",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, orders)
+}
+
+func (o orderRestHandler) RemoveOrder(c *gin.Context) {
+
+	orderId, err := helper.GetParamId(c, "orderId")
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"msg": err.Error(),
+			"err": "BAD_REQUEST",
+		})
+		return
+	}
+
+	err = o.service.RemoveOrder(orderId)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"msg": err.Error(),
+			"err": "INTERNAL_SERVER_ERROR",
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, order_dto.SuccessOrder{
+		Message: "order sukses terhapus",
 	})
 }

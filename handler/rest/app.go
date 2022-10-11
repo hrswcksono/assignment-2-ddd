@@ -22,9 +22,11 @@ func StartApp() {
 
 	route := gin.Default()
 
-	orderRoute := route.Group("/order")
+	orderRoute := route.Group("/orders")
 	{
 		orderRoute.POST("/", orderRestHandler.MakeOrder)
+		orderRoute.GET("/", orderRestHandler.ReadOrder)
+		orderRoute.DELETE("/:orderId", orderRestHandler.RemoveOrder)
 	}
 
 	fmt.Println("Server running on PORT =>", port)
