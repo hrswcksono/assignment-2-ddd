@@ -1,0 +1,265 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/orders": {
+            "get": {
+                "description": "Retrieving Order Data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "operationId": "get-all-order",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entity.Order"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create New Order Data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "operationId": "create-new-order",
+                "parameters": [
+                    {
+                        "description": "request body json",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order_dto.CreateOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/order_dto.MessageOrder"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{orderId}": {
+            "put": {
+                "description": "Update Order Data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "operationId": "update-order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order's order_id",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "request body json",
+                        "name": "RequestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/order_dto.UpdateOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Order"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Order Data",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "operationId": "delete-order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "order's order_id",
+                        "name": "orderId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/order_dto.MessageOrder"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.Item": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "barang antik"
+                },
+                "itemCode": {
+                    "type": "string",
+                    "example": "12345"
+                },
+                "lineItemId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "orderId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 45
+                }
+            }
+        },
+        "entity.Order": {
+            "type": "object",
+            "properties": {
+                "customerName": {
+                    "type": "string",
+                    "example": "haris"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Item"
+                    }
+                },
+                "orderId": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "orderedAt": {
+                    "type": "string",
+                    "example": "2022-10-07T15:54:24.575005+07:00"
+                }
+            }
+        },
+        "order_dto.CreateItemRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "perabotan rumah tangga"
+                },
+                "itemCode": {
+                    "type": "string",
+                    "example": "hssh"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 50
+                }
+            }
+        },
+        "order_dto.CreateOrderRequest": {
+            "type": "object",
+            "properties": {
+                "customerName": {
+                    "type": "string",
+                    "example": "haris"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/order_dto.CreateItemRequest"
+                    }
+                },
+                "orderedAt": {
+                    "type": "string",
+                    "example": "2022-10-07T15:54:24.575005+07:00"
+                }
+            }
+        },
+        "order_dto.MessageOrder": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "order_dto.UpdateItemRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "perabotan rumah tangga"
+                },
+                "itemCode": {
+                    "type": "string",
+                    "example": "hssh"
+                },
+                "lineItemId": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "quantity": {
+                    "type": "integer",
+                    "example": 50
+                }
+            }
+        },
+        "order_dto.UpdateOrderRequest": {
+            "type": "object",
+            "properties": {
+                "customerName": {
+                    "type": "string",
+                    "example": "haris"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/order_dto.UpdateItemRequest"
+                    }
+                },
+                "orderedAt": {
+                    "type": "string",
+                    "example": "2022-10-07T15:54:24.575005+07:00"
+                }
+            }
+        }
+    }
+}

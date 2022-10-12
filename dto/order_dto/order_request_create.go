@@ -8,15 +8,15 @@ import (
 )
 
 type CreateOrderRequest struct {
-	CustomerName string              `json:"customerName" valid:"required~customerName cannot be empty"`
-	OrderedAt    time.Time           `json:"orderedAt" valid:"required~orderedAt cannot be empty"`
+	CustomerName string              `json:"customerName" valid:"required~customerName cannot be empty" example:"haris"`
+	OrderedAt    time.Time           `json:"orderedAt" valid:"required~orderedAt cannot be empty" example:"2022-10-07T15:54:24.575005+07:00"`
 	Items        []CreateItemRequest `json:"items" valid:"required~items cannot be empty"`
 }
 
 type CreateItemRequest struct {
-	ItemCode    string `json:"itemCode" valid:"required~itemCode cannot be empty"`
-	Description string `json:"description" valid:"required~description cannot be empty"`
-	Quantity    int    `json:"quantity" valid:"required~quantity cannot be empty"`
+	ItemCode    string `json:"itemCode" valid:"required~itemCode cannot be empty" example:"hssh"`
+	Description string `json:"description" valid:"required~description cannot be empty" example:"perabotan rumah tangga"`
+	Quantity    int    `json:"quantity" valid:"required~quantity cannot be empty" example:"50"`
 }
 
 func (from CreateOrderRequest) BindToOrderCreate(to *entity.Order) {

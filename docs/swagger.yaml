@@ -1,0 +1,178 @@
+definitions:
+  entity.Item:
+    properties:
+      description:
+        example: barang antik
+        type: string
+      itemCode:
+        example: "12345"
+        type: string
+      lineItemId:
+        example: 1
+        type: integer
+      orderId:
+        example: 1
+        type: integer
+      quantity:
+        example: 45
+        type: integer
+    type: object
+  entity.Order:
+    properties:
+      customerName:
+        example: haris
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/entity.Item'
+        type: array
+      orderId:
+        example: 1
+        type: integer
+      orderedAt:
+        example: "2022-10-07T15:54:24.575005+07:00"
+        type: string
+    type: object
+  order_dto.CreateItemRequest:
+    properties:
+      description:
+        example: perabotan rumah tangga
+        type: string
+      itemCode:
+        example: hssh
+        type: string
+      quantity:
+        example: 50
+        type: integer
+    type: object
+  order_dto.CreateOrderRequest:
+    properties:
+      customerName:
+        example: haris
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/order_dto.CreateItemRequest'
+        type: array
+      orderedAt:
+        example: "2022-10-07T15:54:24.575005+07:00"
+        type: string
+    type: object
+  order_dto.MessageOrder:
+    properties:
+      message:
+        type: string
+    type: object
+  order_dto.UpdateItemRequest:
+    properties:
+      description:
+        example: perabotan rumah tangga
+        type: string
+      itemCode:
+        example: hssh
+        type: string
+      lineItemId:
+        example: 5
+        type: integer
+      quantity:
+        example: 50
+        type: integer
+    type: object
+  order_dto.UpdateOrderRequest:
+    properties:
+      customerName:
+        example: haris
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/order_dto.UpdateItemRequest'
+        type: array
+      orderedAt:
+        example: "2022-10-07T15:54:24.575005+07:00"
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /orders:
+    get:
+      description: Retrieving Order Data
+      operationId: get-all-order
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Order'
+            type: array
+      tags:
+      - order
+    post:
+      consumes:
+      - application/json
+      description: Create New Order Data
+      operationId: create-new-order
+      parameters:
+      - description: request body json
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/order_dto.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/order_dto.MessageOrder'
+      tags:
+      - order
+  /orders/{orderId}:
+    delete:
+      description: Delete Order Data
+      operationId: delete-order
+      parameters:
+      - description: order's order_id
+        in: path
+        name: orderId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/order_dto.MessageOrder'
+      tags:
+      - order
+    put:
+      consumes:
+      - application/json
+      description: Update Order Data
+      operationId: update-order
+      parameters:
+      - description: order's order_id
+        in: path
+        name: orderId
+        required: true
+        type: integer
+      - description: request body json
+        in: body
+        name: RequestBody
+        required: true
+        schema:
+          $ref: '#/definitions/order_dto.UpdateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Order'
+      tags:
+      - order
+swagger: "2.0"
